@@ -1,0 +1,7 @@
+﻿__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+store_customers.csv
+customer_segmentation_results.csv

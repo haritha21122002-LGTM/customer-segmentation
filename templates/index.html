@@ -1,0 +1,634 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Store Customer Segmentation Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    {% if page in ["dashboard", "segmentation"] %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% endif %}
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <h2>Customer Analytics</h2>
+
+    <a href="{{ url_for('dashboard', page='dashboard') }}"
+       {% if page == "dashboard" %}aria-current="page"{% endif %}>Dashboard</a>
+    <a href="{{ url_for('dashboard', page='segmentation') }}"
+       {% if page == "segmentation" %}aria-current="page"{% endif %}>Segmentation</a>
+    <a href="{{ url_for('dashboard', page='analysis') }}"
+       {% if page == "analysis" %}aria-current="page"{% endif %}>Cluster Analysis</a>
+    <a href="{{ url_for('dashboard', page='prediction') }}"
+       {% if page == "prediction" %}aria-current="page"{% endif %}>Prediction</a>
+
+    <a href="{{ url_for('download') }}">Download CSV</a>
+
+</div>
+
+<div class="main">
+
+    <header>
+        <h1>
+            {% if page == "dashboard" %}Dashboard
+            {% elif page == "segmentation" %}Customer Segmentation Analysis
+            {% elif page == "analysis" %}Cluster Analysis
+            {% else %}New Customer Cluster Prediction{% endif %}
+        </h1>
+        <p>Store Customer Segmentation | K-Means Clustering</p>
+    </header>
+
+    <!-- KPI CARDS -->
+
+    {% if page == "dashboard" %}
+    <section id="overview">
+
+        <div class="cards">
+
+            <div class="card blue">
+                <h3>Total Customers</h3>
+                <h1>{{ total_customers }}</h1>
+            </div>
+
+            <div class="card purple">
+                <h3>Total Clusters</h3>
+                <h1>{{ total_clusters }}</h1>
+            </div>
+
+            <div class="card green">
+                <h3>Silhouette Score</h3>
+                <h1>{{ silhouette }}</h1>
+            </div>
+
+            <div class="card orange">
+                <h3>Average Income</h3>
+                <h1>{{ avg_income }}</h1>
+                <p>k$</p>
+            </div>
+
+            <div class="card blue">
+                <h3>Average Spending Score</h3>
+                <h1>{{ avg_spending_score }}</h1>
+                <p>out of 100</p>
+            </div>
+
+            <div class="card purple">
+                <h3>Average Customer Age</h3>
+                <h1>{{ avg_age }}</h1>
+                <p>years</p>
+            </div>
+
+            <div class="card green">
+                <h3>Median Income</h3>
+                <h1>{{ median_income }}</h1>
+                <p>k$</p>
+            </div>
+
+            <div class="card orange">
+                <h3>Highest Spending Score</h3>
+                <h1>{{ max_spending_score }}</h1>
+                <p>out of 100</p>
+            </div>
+
+            <div class="card blue">
+                <h3>Largest Cluster</h3>
+                <h1>{{ largest_cluster_size }}</h1>
+                <p>customers</p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="world-map-card" aria-labelledby="world-map-title">
+        <div class="world-map-header">
+            <div>
+                <p class="eyebrow">GLOBAL OVERVIEW</p>
+                <h2 id="world-map-title">Worldwide Customer Footprint</h2>
+                <p class="world-map-description">
+                    Explore the global view. Add customer country or region data to show actual distribution.
+                </p>
+            </div>
+            <span class="map-status">Location data not available</span>
+        </div>
+        <div class="world-map-panel">
+            <svg class="world-map" viewBox="0 0 600 520" role="img"
+                 aria-labelledby="world-map-svg-title world-map-svg-description"
+                 xmlns="http://www.w3.org/2000/svg">
+                <title id="world-map-svg-title">Illustrative globe</title>
+                <desc id="world-map-svg-description">
+                    Stylized round globe with no customer location data plotted.
+                </desc>
+                <defs>
+                    <radialGradient id="ocean-gradient" cx="36%" cy="30%" r="74%">
+                        <stop offset="0%" stop-color="#347BA8"/>
+                        <stop offset="55%" stop-color="#155078"/>
+                        <stop offset="100%" stop-color="#07162E"/>
+                    </linearGradient>
+                    <linearGradient id="land-shading" x1="0" y1="0" x2=".8" y2="1">
+                        <stop offset="0%" stop-color="#39475B"/>
+                        <stop offset="48%" stop-color="#151D2B"/>
+                        <stop offset="100%" stop-color="#080D16"/>
+                    </linearGradient>
+                    <radialGradient id="globe-sheen" cx="28%" cy="22%" r="78%">
+                        <stop offset="0%" stop-color="#FFFFFF" stop-opacity=".22"/>
+                        <stop offset="48%" stop-color="#B9E6FF" stop-opacity=".06"/>
+                        <stop offset="100%" stop-color="#06142B" stop-opacity=".35"/>
+                    </radialGradient>
+                    <radialGradient id="globe-halo">
+                        <stop offset="72%" stop-color="#3DABFF" stop-opacity=".2"/>
+                        <stop offset="100%" stop-color="#3DABFF" stop-opacity="0"/>
+                    </radialGradient>
+                    <clipPath id="globe-clip">
+                        <circle cx="300" cy="245" r="238"/>
+                    </clipPath>
+                </defs>
+                <ellipse cx="300" cy="260" rx="255" ry="255" fill="url(#globe-halo)"/>
+                <circle class="globe-sphere" cx="300" cy="245" r="238" fill="url(#ocean-gradient)"/>
+                <g clip-path="url(#globe-clip)">
+                    <g class="map-graticule" fill="none">
+                        <ellipse cx="300" cy="245" rx="225" ry="58"/>
+                        <ellipse cx="300" cy="245" rx="225" ry="126"/>
+                        <ellipse cx="300" cy="245" rx="108" ry="228"/>
+                        <ellipse cx="300" cy="245" rx="39" ry="228"/>
+                        <path d="M101 245H499"/>
+                    </g>
+                    <g class="map-land" transform="translate(60 53) scale(.48 .8)">
+                        <path d="M101 114 130 87 169 73 202 81 224 66 260 76 279 97 310 105 326 130 310 151 285 157 275 181 250 190 242 219 218 231 204 257 185 252 174 228 154 215 145 188 125 177 116 153 94 143Z"/>
+                        <path d="m248 222 18 10 10 26 18 13 10 30 18 20 3 28-13 25-8 39-16 30-13-25-3-31-16-30-6-27-17-23 5-24-12-24 10-23Z"/>
+                        <path d="m173 63 17-28 31-12 25 12 9 23-19 20-30-4Z"/>
+                        <path d="m438 118 18-21 25-5 16 15-7 20-20 8-20-5Z"/>
+                        <path d="m452 153 22-18 29 5 18 22 17 10 3 29-19 18-12 31-20 27-9 38-18 33-14-14-6-31-15-26 4-28-15-20 10-25-8-27Z"/>
+                        <path d="m510 112 31-28 44-12 39 10 25-11 38 14 42-1 35 17 42 5 30 22 42 9 18 21-24 18-35-4-25 16-32-3-23 18-30-8-23 10-31-16-28 4-27-19-24 3-13-23-23 1-17-22-27 4-17-18Z"/>
+                        <path d="m748 290 25-17 32 4 22 19 29 9 14 25-14 23-27 4-21 21-29-8-18-22-28-10-8-25Z"/>
+                        <path d="m871 360 12-10 14 7-3 16-14 4Z"/>
+                        <path d="m442 98 7-17 9 6-2 15Z"/>
+                        <path d="m470 70 12-9 10 8-8 12Z"/>
+                        <path d="m793 180 11-7 9 9-7 12Z"/>
+                    </g>
+                    <g class="map-labels">
+                        <text x="153" y="190">N. AMERICA</text>
+                        <text x="194" y="319">S. AMERICA</text>
+                        <text x="283" y="217">EUROPE</text>
+                        <text x="288" y="278">AFRICA</text>
+                        <text x="377" y="181">ASIA</text>
+                        <text x="442" y="319">OCEANIA</text>
+                    </g>
+                    <circle cx="300" cy="245" r="238" fill="url(#globe-sheen)"/>
+                </g>
+                <circle class="globe-outline" cx="300" cy="245" r="238" fill="none"/>
+            </svg>
+            <div class="map-empty-state">
+                <span class="map-empty-icon" aria-hidden="true">◎</span>
+                <span>Connect location data to visualize customers by region</span>
+            </div>
+        </div>
+        <p class="map-footnote">
+            Illustrative base map only — no customer locations are represented.
+        </p>
+    </section>
+
+    <section class="segmentation-visual" aria-labelledby="visual-title">
+        <div>
+            <p class="eyebrow">CUSTOMER INSIGHTS</p>
+            <h2 id="visual-title">Every customer has a segment.</h2>
+            <p class="visual-description">
+                Grouping customers by age, income, and spending patterns
+                helps reveal meaningful audiences.
+            </p>
+        </div>
+        <img
+            src="{{ url_for('static', filename='customer-segmentation.svg') }}"
+            alt="Illustration of customer groups represented by colorful clusters of people">
+    </section>
+    {% endif %}
+
+    <!-- CHARTS -->
+
+    {% if page == "segmentation" %}
+    <section id="segmentation">
+
+        <h2>Customer Segmentation Analysis</h2>
+
+        <div class="chart-grid">
+
+            <div class="chart-box">
+                <h3>Customer Cluster Distribution</h3>
+                <canvas id="clusterChart"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>Elbow Method</h3>
+                <canvas id="elbowChart"></canvas>
+            </div>
+
+        </div>
+
+        <div class="chart-box full">
+
+            <h3>Annual Income vs Spending Score</h3>
+
+            <canvas id="scatterChart"></canvas>
+
+        </div>
+
+        <div class="chart-box full">
+
+            <h3>Age vs Annual Income</h3>
+
+            <canvas id="ageChart"></canvas>
+
+        </div>
+
+    </section>
+    {% endif %}
+
+    <!-- CLUSTER ANALYSIS -->
+
+    {% if page == "analysis" %}
+    <section id="analysis">
+
+        <h2>Cluster Analysis</h2>
+
+        <div class="table-box">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Cluster</th>
+                        <th>Average Age</th>
+                        <th>Annual Income</th>
+                        <th>Spending Score</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for row in analysis_data %}
+
+                    <tr>
+
+                        <td>Cluster {{ row.cluster }}</td>
+
+                        <td>{{ row.age }}</td>
+
+                        <td>{{ row.income }}</td>
+
+                        <td>{{ row.spending }}</td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+    {% endif %}
+
+    <!-- PREDICTION -->
+
+    {% if page == "prediction" %}
+    <section id="prediction">
+
+        <h2>New Customer Cluster Prediction</h2>
+
+        <div class="prediction-box">
+
+            <form method="POST">
+
+                <label>Customer Age</label>
+
+                <input
+                    type="number"
+                    name="age"
+                    min="0"
+                    placeholder="Enter age"
+                    required>
+
+                <label>Annual Income (k$)</label>
+
+                <input
+                    type="number"
+                    name="income"
+                    min="0"
+                    step="any"
+                    placeholder="Enter annual income"
+                    required>
+
+                <label>Spending Score</label>
+
+                <input
+                    type="number"
+                    name="spending"
+                    min="0"
+                    max="100"
+                    placeholder="Enter spending score"
+                    required>
+
+                <button type="submit">
+                    Predict Cluster
+                </button>
+
+            </form>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <p class="error">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% if prediction is not none %}
+
+            <div class="result">
+
+                <h3>Prediction Result</h3>
+
+                <h1>Cluster {{ prediction }}</h1>
+
+                <p>Customer assigned to the predicted cluster.</p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+    {% endif %}
+
+    <footer>
+        <p>Store Customer Segmentation | Machine Learning Dashboard</p>
+    </footer>
+
+</div>
+
+{% if page == "segmentation" %}
+<script>
+
+const labels = {{ cluster_labels | safe }};
+const counts = {{ cluster_values | safe }};
+
+const scatterData = {{ scatter_data | safe }};
+
+const elbowLabels = {{ elbow_labels | safe }};
+const elbowValues = {{ elbow_values | safe }};
+
+const colors = [
+    '#536DFE',
+    '#7C4DFF',
+    '#00B894',
+    '#FF9800',
+    '#E91E63'
+];
+
+// CLUSTER DISTRIBUTION
+
+new Chart(document.getElementById('clusterChart'), {
+
+    type: 'bar',
+
+    data: {
+
+        labels: labels,
+
+        datasets: [{
+
+            label: 'Number of Customers',
+
+            data: counts,
+
+            backgroundColor: colors,
+
+            borderRadius: 8
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+                display: false
+            }
+
+        }
+
+    }
+
+});
+
+// ELBOW METHOD
+
+new Chart(document.getElementById('elbowChart'), {
+
+    type: 'line',
+
+    data: {
+
+        labels: elbowLabels,
+
+        datasets: [{
+
+            label: 'Inertia',
+
+            data: elbowValues,
+
+            borderColor: '#536DFE',
+
+            backgroundColor: '#536DFE',
+
+            tension: 0.3,
+
+            pointRadius: 5
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        scales: {
+
+            x: {
+                title: {
+                    display: true,
+                    text: 'Number of Clusters'
+                }
+            },
+
+            y: {
+                title: {
+                    display: true,
+                    text: 'Inertia'
+                }
+            }
+
+        }
+
+    }
+
+});
+
+// SCATTER CHART
+
+const scatterColors = [
+    '#536DFE',
+    '#7C4DFF',
+    '#00B894',
+    '#FF9800',
+    '#E91E63'
+];
+
+const datasets = [];
+
+for (let i = 0; i < 5; i++) {
+
+    datasets.push({
+
+        label: 'Cluster ' + i,
+
+        data: scatterData
+            .filter(item => item.cluster === i)
+            .map(item => ({
+
+                x: item.income,
+
+                y: item.spending
+
+            })),
+
+        backgroundColor: scatterColors[i],
+
+        pointRadius: 6
+
+    });
+
+}
+
+new Chart(document.getElementById('scatterChart'), {
+
+    type: 'scatter',
+
+    data: {
+        datasets: datasets
+    },
+
+    options: {
+
+        responsive: true,
+
+        scales: {
+
+            x: {
+                title: {
+                    display: true,
+                    text: 'Annual Income (k$)'
+                }
+            },
+
+            y: {
+                title: {
+                    display: true,
+                    text: 'Spending Score'
+                }
+            }
+
+        }
+
+    }
+
+});
+
+// AGE VS INCOME
+
+const ageDatasets = [];
+
+for (let i = 0; i < 5; i++) {
+
+    ageDatasets.push({
+
+        label: 'Cluster ' + i,
+
+        data: scatterData
+            .filter(item => item.cluster === i)
+            .map(item => ({
+
+                x: item.age,
+
+                y: item.income
+
+            })),
+
+        backgroundColor: scatterColors[i],
+
+        pointRadius: 6
+
+    });
+
+}
+
+new Chart(document.getElementById('ageChart'), {
+
+    type: 'scatter',
+
+    data: {
+        datasets: ageDatasets
+    },
+
+    options: {
+
+        responsive: true,
+
+        scales: {
+
+            x: {
+                title: {
+                    display: true,
+                    text: 'Customer Age'
+                }
+            },
+
+            y: {
+                title: {
+                    display: true,
+                    text: 'Annual Income (k$)'
+                }
+            }
+
+        }
+
+    }
+
+});
+
+</script>
+{% endif %}
+
+</body>
+</html>

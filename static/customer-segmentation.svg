@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="300" viewBox="0 0 520 300" fill="none" role="img" aria-labelledby="title description">
+  <title id="title">Customer segments</title>
+  <desc id="description">Three groups of customers shown as colored circles, connected to a central customer profile.</desc>
+  <defs>
+    <linearGradient id="panel" x1="83" y1="23" x2="444" y2="277" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff"/>
+      <stop offset="1" stop-color="#eef1ff"/>
+    </linearGradient>
+    <filter id="shadow" x="170" y="71" width="180" height="185" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="background"/>
+      <feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="alpha"/>
+      <feOffset dy="8"/>
+      <feGaussianBlur stdDeviation="10"/>
+      <feComposite in2="alpha" operator="out"/>
+      <feColorMatrix values="0 0 0 0 0.19 0 0 0 0 0.24 0 0 0 0 0.46 0 0 0 0.14 0"/>
+      <feBlend in2="background" result="shadow"/>
+      <feBlend in="SourceGraphic" in2="shadow" result="shape"/>
+    </filter>
+  </defs>
+  <rect x="12" y="12" width="496" height="276" rx="26" fill="url(#panel)"/>
+  <circle cx="87" cy="72" r="36" fill="#E8ECFF"/>
+  <circle cx="442" cy="230" r="44" fill="#E4F6F1"/>
+  <path d="M142 112C174 112 176 145 202 145M378 112C346 112 344 145 318 145M142 205C174 205 176 174 202 174M378 205C346 205 344 174 318 174" stroke="#C9D0E8" stroke-width="2" stroke-dasharray="5 7"/>
+  <g filter="url(#shadow)">
+    <rect x="202" y="82" width="116" height="154" rx="24" fill="#fff"/>
+    <circle cx="260" cy="133" r="25" fill="#536DFE"/>
+    <path d="M216 205C218.9 180.9 236.2 166 260 166C283.8 166 301.1 180.9 304 205V211H216V205Z" fill="#536DFE"/>
+    <circle cx="260" cy="226" r="4" fill="#D9DEEF"/>
+  </g>
+  <g>
+    <circle cx="91" cy="111" r="17" fill="#FFB86B"/>
+    <path d="M66 158C68 141 78 132 91 132C104 132 114 141 116 158V163H66V158Z" fill="#FF9800"/>
+    <circle cx="137" cy="145" r="14" fill="#A78BFA"/>
+    <path d="M117 184C119 170 127 163 137 163C147 163 155 170 157 184V188H117V184Z" fill="#7C4DFF"/>
+    <circle cx="81" cy="206" r="13" fill="#536DFE"/>
+    <path d="M62 242C64 229 71 223 81 223C91 223 98 229 100 242V246H62V242Z" fill="#536DFE"/>
+  </g>
+  <g>
+    <circle cx="429" cy="105" r="17" fill="#55C7A8"/>
+    <path d="M404 152C406 135 416 126 429 126C442 126 452 135 454 152V157H404V152Z" fill="#00A985"/>
+    <circle cx="382" cy="153" r="14" fill="#FF8BA7"/>
+    <path d="M362 192C364 178 372 171 382 171C392 171 400 178 402 192V196H362V192Z" fill="#E86687"/>
+    <circle cx="440" cy="205" r="13" fill="#7C4DFF"/>
+    <path d="M421 241C423 228 430 222 440 222C450 222 457 228 459 241V245H421V241Z" fill="#7C4DFF"/>
+  </g>
+  <circle cx="184" cy="91" r="5" fill="#FFB86B"/>
+  <circle cx="336" cy="221" r="5" fill="#55C7A8"/>
+  <circle cx="171" cy="226" r="4" fill="#A78BFA"/>
+  <circle cx="353" cy="86" r="4" fill="#FF8BA7"/>
+</svg>
