@@ -2,7 +2,9 @@
 
 A Flask dashboard that segments customers with a five-cluster K-Means model.
 
-## Run locally
+**Aspiring Data Analyst & Data Scientist – Haritha K.**
+
+## Run Locally
 
 1. Install dependencies with `pip install -r requirements.txt`.
 2. Place the input file `store_customers.csv` in the project root. It must include `Age`, `Annual Income (k$)`, and `Spending Score (1-100)` columns.
